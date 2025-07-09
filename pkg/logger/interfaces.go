@@ -47,22 +47,22 @@ const (
 
 // Entry はログエントリの構造を表す
 type Entry struct {
-	ID          string                 `json:"id"`
-	Timestamp   time.Time              `json:"timestamp"`
-	Level       LogLevel               `json:"level"`
-	Action      ActionType             `json:"action"`
-	Operation   string                 `json:"operation"`
-	Input       map[string]interface{} `json:"input,omitempty"`
-	Output      map[string]interface{} `json:"output,omitempty"`
-	Error       *ErrorInfo             `json:"error,omitempty"`
-	Duration    time.Duration          `json:"duration,omitempty"`
-	Context     map[string]interface{} `json:"context,omitempty"`
-	Tags        []string               `json:"tags,omitempty"`
-	TraceID     string                 `json:"trace_id,omitempty"`
-	SpanID      string                 `json:"span_id,omitempty"`
-	ParentID    string                 `json:"parent_id,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty"`
-	
+	ID        string                 `json:"id"`
+	Timestamp time.Time              `json:"timestamp"`
+	Level     LogLevel               `json:"level"`
+	Action    ActionType             `json:"action"`
+	Operation string                 `json:"operation"`
+	Input     map[string]interface{} `json:"input,omitempty"`
+	Output    map[string]interface{} `json:"output,omitempty"`
+	Error     *ErrorInfo             `json:"error,omitempty"`
+	Duration  time.Duration          `json:"duration,omitempty"`
+	Context   map[string]interface{} `json:"context,omitempty"`
+	Tags      []string               `json:"tags,omitempty"`
+	TraceID   string                 `json:"trace_id,omitempty"`
+	SpanID    string                 `json:"span_id,omitempty"`
+	ParentID  string                 `json:"parent_id,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty"`
+
 	// システム情報
 	SystemInfo  map[string]interface{} `json:"system_info,omitempty"`
 	RuntimeInfo map[string]interface{} `json:"runtime_info,omitempty"`
@@ -81,13 +81,13 @@ type ErrorInfo struct {
 
 // OperationTracker は操作の追跡を行う
 type OperationTracker struct {
-	ID         string
-	Operation  string
-	StartTime  time.Time
-	Input      map[string]interface{}
-	Context    map[string]interface{}
-	Logger     Logger
-	parent     *OperationTracker
+	ID        string
+	Operation string
+	StartTime time.Time
+	Input     map[string]interface{}
+	Context   map[string]interface{}
+	Logger    Logger
+	parent    *OperationTracker
 }
 
 // Logger はロギングのインターフェースを定義する
@@ -126,7 +126,7 @@ type Logger interface {
 	GetLevel() LogLevel
 	AddWriter(writer Writer)
 	SetFormatter(formatter Formatter)
-	
+
 	// システム情報設定
 	EnableSystemInfo(enabled bool)
 	EnableRuntimeInfo(enabled bool)

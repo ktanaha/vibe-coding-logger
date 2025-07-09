@@ -45,7 +45,6 @@ func convertToInternalErrorInfo(errorInfo *ErrorInfo) *internal.ErrorInfo {
 	}
 }
 
-
 // NewConsoleWriter は新しいコンソールライターを作成します
 func NewConsoleWriter() Writer {
 	return &consoleWriterImpl{

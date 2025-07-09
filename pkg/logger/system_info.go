@@ -14,60 +14,60 @@ type SystemInfo struct {
 	OS           string `json:"os"`
 	Architecture string `json:"architecture"`
 	Hostname     string `json:"hostname"`
-	
+
 	// Go runtime情報
 	GoVersion    string `json:"go_version"`
 	GoOS         string `json:"go_os"`
 	GoArch       string `json:"go_arch"`
 	NumCPU       int    `json:"num_cpu"`
 	NumGoroutine int    `json:"num_goroutine"`
-	
+
 	// メモリ情報
-	MemStats     *runtime.MemStats `json:"mem_stats,omitempty"`
-	
+	MemStats *runtime.MemStats `json:"mem_stats,omitempty"`
+
 	// プロセス情報
-	PID          int    `json:"pid"`
-	
+	PID int `json:"pid"`
+
 	// 環境変数（選択的）
-	Environment  map[string]string `json:"environment,omitempty"`
-	
+	Environment map[string]string `json:"environment,omitempty"`
+
 	// タイムスタンプ
-	CollectedAt  time.Time `json:"collected_at"`
+	CollectedAt time.Time `json:"collected_at"`
 }
 
 // EnvironmentInfo は環境情報を表す
 type EnvironmentInfo struct {
 	// 開発環境情報
 	WorkingDirectory string `json:"working_directory"`
-	GoPath          string `json:"go_path"`
-	GoRoot          string `json:"go_root"`
-	GoMod           string `json:"go_mod,omitempty"`
-	
+	GoPath           string `json:"go_path"`
+	GoRoot           string `json:"go_root"`
+	GoMod            string `json:"go_mod,omitempty"`
+
 	// エディタ・IDE情報
-	Editor          string `json:"editor,omitempty"`
-	
+	Editor string `json:"editor,omitempty"`
+
 	// Git情報
-	GitBranch       string `json:"git_branch,omitempty"`
-	GitCommit       string `json:"git_commit,omitempty"`
-	GitRepository   string `json:"git_repository,omitempty"`
-	
+	GitBranch     string `json:"git_branch,omitempty"`
+	GitCommit     string `json:"git_commit,omitempty"`
+	GitRepository string `json:"git_repository,omitempty"`
+
 	// バージョン管理
-	NodeVersion     string `json:"node_version,omitempty"`
-	PythonVersion   string `json:"python_version,omitempty"`
-	DockerVersion   string `json:"docker_version,omitempty"`
-	
+	NodeVersion   string `json:"node_version,omitempty"`
+	PythonVersion string `json:"python_version,omitempty"`
+	DockerVersion string `json:"docker_version,omitempty"`
+
 	// その他のツール
 	DatabaseVersion map[string]string `json:"database_version,omitempty"`
-	
-	CollectedAt     time.Time `json:"collected_at"`
+
+	CollectedAt time.Time `json:"collected_at"`
 }
 
 // SystemInfoCollector はシステム情報を収集する
 type SystemInfoCollector struct {
-	mu    sync.RWMutex
-	cache *SystemInfo
-	envCache *EnvironmentInfo
-	cacheExpiry time.Duration
+	mu            sync.RWMutex
+	cache         *SystemInfo
+	envCache      *EnvironmentInfo
+	cacheExpiry   time.Duration
 	lastCollected time.Time
 }
 
@@ -119,7 +119,7 @@ func (sic *SystemInfoCollector) GetEnvironmentInfo() *EnvironmentInfo {
 // collectSystemInfo はシステム情報を収集する
 func (sic *SystemInfoCollector) collectSystemInfo() *SystemInfo {
 	hostname, _ := os.Hostname()
-	
+
 	// メモリ統計を取得
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
@@ -130,7 +130,7 @@ func (sic *SystemInfoCollector) collectSystemInfo() *SystemInfo {
 		"GOPATH", "GOROOT", "GOOS", "GOARCH",
 		"CI", "DOCKER", "KUBERNETES_SERVICE_HOST",
 	}
-	
+
 	environment := make(map[string]string)
 	for _, key := range importantEnvVars {
 		if value := os.Getenv(key); value != "" {
@@ -157,12 +157,12 @@ func (sic *SystemInfoCollector) collectSystemInfo() *SystemInfo {
 // collectEnvironmentInfo は環境情報を収集する
 func (sic *SystemInfoCollector) collectEnvironmentInfo() *EnvironmentInfo {
 	wd, _ := os.Getwd()
-	
+
 	envInfo := &EnvironmentInfo{
 		WorkingDirectory: wd,
-		GoPath:          os.Getenv("GOPATH"),
-		GoRoot:          os.Getenv("GOROOT"),
-		CollectedAt:     time.Now(),
+		GoPath:           os.Getenv("GOPATH"),
+		GoRoot:           os.Getenv("GOROOT"),
+		CollectedAt:      time.Now(),
 	}
 
 	// go.modファイルの存在確認
@@ -231,7 +231,7 @@ func (sic *SystemInfoCollector) getGitRepository() string {
 		content := string(data)
 		lines := strings.Split(content, "\n")
 		inOriginSection := false
-		
+
 		for _, line := range lines {
 			line = strings.TrimSpace(line)
 			if line == `[remote "origin"]` {
@@ -253,7 +253,7 @@ func (sic *SystemInfoCollector) getGitRepository() string {
 func (sic *SystemInfoCollector) getCommandVersion(command, versionFlag string) string {
 	// セキュリティ上の理由で、実際の実装では外部コマンド実行は避ける
 	// ここでは環境変数やファイルベースの検出に留める
-	
+
 	switch command {
 	case "node":
 		if version := os.Getenv("NODE_VERSION"); version != "" {
@@ -264,7 +264,7 @@ func (sic *SystemInfoCollector) getCommandVersion(command, versionFlag string) s
 			return version
 		}
 	}
-	
+
 	return ""
 }
 
@@ -274,18 +274,18 @@ func (sic *SystemInfoCollector) getDockerVersion() string {
 	if _, err := os.Stat("/.dockerenv"); err == nil {
 		return "running-in-container"
 	}
-	
+
 	if version := os.Getenv("DOCKER_VERSION"); version != "" {
 		return version
 	}
-	
+
 	return ""
 }
 
 // getDatabaseVersions はデータベースのバージョン情報を取得する
 func (sic *SystemInfoCollector) getDatabaseVersions() map[string]string {
 	versions := make(map[string]string)
-	
+
 	// 環境変数からデータベース情報を収集
 	dbEnvVars := map[string]string{
 		"POSTGRES_VERSION": "postgresql",
@@ -293,13 +293,13 @@ func (sic *SystemInfoCollector) getDatabaseVersions() map[string]string {
 		"REDIS_VERSION":    "redis",
 		"MONGODB_VERSION":  "mongodb",
 	}
-	
+
 	for envVar, dbName := range dbEnvVars {
 		if version := os.Getenv(envVar); version != "" {
 			versions[dbName] = version
 		}
 	}
-	
+
 	return versions
 }
 
@@ -307,17 +307,17 @@ func (sic *SystemInfoCollector) getDatabaseVersions() map[string]string {
 func (sic *SystemInfoCollector) GetCompactSystemInfo() map[string]interface{} {
 	sysInfo := sic.GetSystemInfo()
 	envInfo := sic.GetEnvironmentInfo()
-	
+
 	compact := map[string]interface{}{
-		"os":           sysInfo.OS,
-		"arch":         sysInfo.Architecture,
-		"go_version":   sysInfo.GoVersion,
-		"hostname":     sysInfo.Hostname,
-		"pid":          sysInfo.PID,
-		"num_cpu":      sysInfo.NumCPU,
-		"working_dir":  envInfo.WorkingDirectory,
+		"os":          sysInfo.OS,
+		"arch":        sysInfo.Architecture,
+		"go_version":  sysInfo.GoVersion,
+		"hostname":    sysInfo.Hostname,
+		"pid":         sysInfo.PID,
+		"num_cpu":     sysInfo.NumCPU,
+		"working_dir": envInfo.WorkingDirectory,
 	}
-	
+
 	// Git情報があれば追加
 	if envInfo.GitBranch != "" {
 		compact["git_branch"] = envInfo.GitBranch
@@ -325,7 +325,7 @@ func (sic *SystemInfoCollector) GetCompactSystemInfo() map[string]interface{} {
 	if envInfo.GitCommit != "" {
 		compact["git_commit"] = envInfo.GitCommit
 	}
-	
+
 	// その他の言語バージョン
 	if envInfo.NodeVersion != "" {
 		compact["node_version"] = envInfo.NodeVersion
@@ -333,7 +333,7 @@ func (sic *SystemInfoCollector) GetCompactSystemInfo() map[string]interface{} {
 	if envInfo.PythonVersion != "" {
 		compact["python_version"] = envInfo.PythonVersion
 	}
-	
+
 	return compact
 }
 
@@ -341,16 +341,16 @@ func (sic *SystemInfoCollector) GetCompactSystemInfo() map[string]interface{} {
 func (sic *SystemInfoCollector) GetRuntimeStats() map[string]interface{} {
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
-	
+
 	return map[string]interface{}{
-		"goroutines":     runtime.NumGoroutine(),
-		"heap_alloc":     memStats.HeapAlloc,
-		"heap_sys":       memStats.HeapSys,
-		"heap_objects":   memStats.HeapObjects,
-		"stack_inuse":    memStats.StackInuse,
-		"gc_runs":        memStats.NumGC,
-		"next_gc":        memStats.NextGC,
-		"last_gc":        time.Unix(0, int64(memStats.LastGC)).Format(time.RFC3339),
+		"goroutines":   runtime.NumGoroutine(),
+		"heap_alloc":   memStats.HeapAlloc,
+		"heap_sys":     memStats.HeapSys,
+		"heap_objects": memStats.HeapObjects,
+		"stack_inuse":  memStats.StackInuse,
+		"gc_runs":      memStats.NumGC,
+		"next_gc":      memStats.NextGC,
+		"last_gc":      time.Unix(0, int64(memStats.LastGC)).Format(time.RFC3339),
 	}
 }
 

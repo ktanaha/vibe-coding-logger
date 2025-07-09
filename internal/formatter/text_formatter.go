@@ -111,7 +111,7 @@ func (f *TextFormatter) Format(entry *internal.Entry) ([]byte, error) {
 // formatLevel はログレベルを色付きでフォーマットする
 func (f *TextFormatter) formatLevel(level internal.LogLevel) string {
 	levelStr := level.String()
-	
+
 	if !f.ColorEnabled {
 		return fmt.Sprintf("[%s]", levelStr)
 	}
@@ -140,7 +140,7 @@ func (f *TextFormatter) formatFields(fields map[string]interface{}) string {
 
 	var parts []string
 	keys := make([]string, 0, len(fields))
-	
+
 	for k := range fields {
 		keys = append(keys, k)
 	}

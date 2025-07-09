@@ -134,7 +134,7 @@ func (f *VibeJSONFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	if f.IncludeMetrics {
 		// メトリクス情報を追加
 		metrics := make(map[string]interface{})
-		
+
 		if entry.Duration > 0 {
 			metrics["performance"] = map[string]interface{}{
 				"duration_ms":     entry.Duration.Milliseconds(),

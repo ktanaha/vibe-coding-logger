@@ -72,7 +72,7 @@ func (w *FileWriter) SetFormatter(f internal.Formatter) {
 func (w *FileWriter) Close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	
+
 	if w.file != nil {
 		return w.file.Close()
 	}
@@ -151,12 +151,12 @@ func (w *RotatingFileWriter) rotate() error {
 	for i := w.maxFiles - 1; i >= 1; i-- {
 		oldName := fmt.Sprintf("%s.%d", w.baseFilename, i)
 		newName := fmt.Sprintf("%s.%d", w.baseFilename, i+1)
-		
+
 		if i == w.maxFiles-1 {
 			// 最古のファイルを削除
 			os.Remove(newName)
 		}
-		
+
 		if _, err := os.Stat(oldName); err == nil {
 			_ = os.Rename(oldName, newName) // エラーは無視（ログローテーション時のベストエフォート）
 		}
@@ -179,7 +179,7 @@ func (w *RotatingFileWriter) openCurrentFile() error {
 	}
 
 	w.currentFile = file
-	
+
 	// 現在のファイルサイズを取得
 	stat, err := file.Stat()
 	if err != nil {
@@ -201,7 +201,7 @@ func (w *RotatingFileWriter) SetFormatter(formatter internal.Formatter) {
 func (w *RotatingFileWriter) Close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	
+
 	if w.currentFile != nil {
 		return w.currentFile.Close()
 	}
@@ -280,7 +280,7 @@ func (w *DailyRotatingFileWriter) rotate() error {
 func (w *DailyRotatingFileWriter) openCurrentFile() error {
 	currentDate := time.Now().Format("2006-01-02")
 	filename := fmt.Sprintf("%s.%s", w.baseFilename, currentDate)
-	
+
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return err
@@ -302,7 +302,7 @@ func (w *DailyRotatingFileWriter) SetFormatter(formatter internal.Formatter) {
 func (w *DailyRotatingFileWriter) Close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	
+
 	if w.currentFile != nil {
 		return w.currentFile.Close()
 	}
@@ -320,7 +320,7 @@ type VibeFileWriter struct {
 func NewVibeFileWriter(baseFilename, sessionID, problemDomain string) (*VibeFileWriter, error) {
 	// セッションIDと問題ドメインを含むファイル名を生成
 	filename := fmt.Sprintf("%s_%s_%s.log", baseFilename, sessionID, problemDomain)
-	
+
 	fileWriter, err := NewFileWriter(filename)
 	if err != nil {
 		return nil, err

@@ -70,11 +70,11 @@ func (t *OperationTracker) CreateSubOperation(operation string, input map[string
 // 一般的なOperationTrackerを組み込み、セッション管理と
 // 問題領域、プログラミングステップに特化した機能を提供します。
 type VibeTracker struct {
-	*OperationTracker            // 基本の操作トラッカー機能を組み込み
-	sessionID       string       // セッションの一意識別子
-	problemDomain   string       // 問題領域（例：「Web開発」「データ分析」）
-	programmingStep string       // プログラミングステップ（例：「設計」「実装」「テスト」）
-	contextData     map[string]interface{} // バイブコーディング固有のコンテキストデータ
+	*OperationTracker                        // 基本の操作トラッカー機能を組み込み
+	sessionID         string                 // セッションの一意識別子
+	problemDomain     string                 // 問題領域（例：「Web開発」「データ分析」）
+	programmingStep   string                 // プログラミングステップ（例：「設計」「実装」「テスト」）
+	contextData       map[string]interface{} // バイブコーディング固有のコンテキストデータ
 }
 
 // NewVibeTracker は新しいバイブトラッカーを作成します。
@@ -275,12 +275,12 @@ func (vt *VibeTracker) LogSessionSummary(accomplishments []string, challenges []
 // BatchOperationTracker は複数の操作を一括で追跡します。
 // 関連する複数の操作をグループ化し、バッチ全体の結果を管理します。
 type BatchOperationTracker struct {
-	ID         string                   // バッチの一意識別子
-	BatchName  string                   // バッチの名前
-	Operations []*OperationTracker      // バッチに含まれる操作のスライス
-	StartTime  time.Time               // バッチの開始時刻
-	Logger     Logger                  // ログ出力用のLoggerインスタンス
-	Context    map[string]interface{}  // バッチ全体のコンテキスト情報
+	ID         string                 // バッチの一意識別子
+	BatchName  string                 // バッチの名前
+	Operations []*OperationTracker    // バッチに含まれる操作のスライス
+	StartTime  time.Time              // バッチの開始時刻
+	Logger     Logger                 // ログ出力用のLoggerインスタンス
+	Context    map[string]interface{} // バッチ全体のコンテキスト情報
 }
 
 // NewBatchOperationTracker は新しいバッチ操作トラッカーを作成します。

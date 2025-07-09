@@ -13,17 +13,17 @@ import (
 
 // vibeLogger はLoggerインターフェースの実装
 type vibeLogger struct {
-	level               LogLevel
-	writers             []Writer
-	formatter           Formatter
-	fields              map[string]interface{}
-	tags                []string
-	traceID             string
-	spanID              string
-	parentID            string
-	context             context.Context
-	mu                  sync.RWMutex
-	
+	level     LogLevel
+	writers   []Writer
+	formatter Formatter
+	fields    map[string]interface{}
+	tags      []string
+	traceID   string
+	spanID    string
+	parentID  string
+	context   context.Context
+	mu        sync.RWMutex
+
 	// システム情報設定
 	includeSystemInfo   bool
 	includeRuntimeInfo  bool
@@ -142,7 +142,7 @@ func (l *vibeLogger) StartOperation(operation string, input map[string]interface
 		Logger:    l,
 	}
 
-	l.log(INFO, operation, 
+	l.log(INFO, operation,
 		String("action", string(ActionStart)),
 		String("operation_id", tracker.ID),
 		Any("input", input))
@@ -153,7 +153,7 @@ func (l *vibeLogger) StartOperation(operation string, input map[string]interface
 // CompleteOperation は操作の完了を記録する
 func (l *vibeLogger) CompleteOperation(tracker *OperationTracker, output map[string]interface{}) {
 	duration := time.Since(tracker.StartTime)
-	
+
 	l.log(INFO, tracker.Operation,
 		String("action", string(ActionComplete)),
 		String("operation_id", tracker.ID),
@@ -165,7 +165,7 @@ func (l *vibeLogger) CompleteOperation(tracker *OperationTracker, output map[str
 // ErrorOperation は操作のエラーを記録する
 func (l *vibeLogger) ErrorOperation(tracker *OperationTracker, err error, resolution string) {
 	duration := time.Since(tracker.StartTime)
-	
+
 	errorInfo := &ErrorInfo{
 		Message:    err.Error(),
 		Type:       fmt.Sprintf("%T", err),
@@ -219,7 +219,7 @@ func (l *vibeLogger) LogRecovery(operation string, originalErr error, recoveryAc
 func (l *vibeLogger) WithContext(ctx context.Context) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.context = ctx
 	return newLogger
@@ -229,7 +229,7 @@ func (l *vibeLogger) WithContext(ctx context.Context) Logger {
 func (l *vibeLogger) WithField(key string, value interface{}) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.fields[key] = value
 	return newLogger
@@ -239,7 +239,7 @@ func (l *vibeLogger) WithField(key string, value interface{}) Logger {
 func (l *vibeLogger) WithFields(fields map[string]interface{}) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	for k, v := range fields {
 		newLogger.fields[k] = v
@@ -251,7 +251,7 @@ func (l *vibeLogger) WithFields(fields map[string]interface{}) Logger {
 func (l *vibeLogger) WithTag(tag string) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.tags = append(newLogger.tags, tag)
 	return newLogger
@@ -261,7 +261,7 @@ func (l *vibeLogger) WithTag(tag string) Logger {
 func (l *vibeLogger) WithTags(tags []string) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.tags = append(newLogger.tags, tags...)
 	return newLogger
@@ -271,7 +271,7 @@ func (l *vibeLogger) WithTags(tags []string) Logger {
 func (l *vibeLogger) WithTraceID(traceID string) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.traceID = traceID
 	return newLogger
@@ -281,7 +281,7 @@ func (l *vibeLogger) WithTraceID(traceID string) Logger {
 func (l *vibeLogger) WithSpanID(spanID string) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.spanID = spanID
 	return newLogger
@@ -291,7 +291,7 @@ func (l *vibeLogger) WithSpanID(spanID string) Logger {
 func (l *vibeLogger) WithParentID(parentID string) Logger {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	
+
 	newLogger := l.clone()
 	newLogger.parentID = parentID
 	return newLogger

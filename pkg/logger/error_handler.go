@@ -186,7 +186,7 @@ func NewRetryHandler(logger Logger) *RetryHandler {
 // ExecuteWithRetry は指定した関数をリトライ付きで実行する
 func (rh *RetryHandler) ExecuteWithRetry(operation string, fn func() error, maxAttempts int, backoff time.Duration, context map[string]interface{}) error {
 	var lastErr error
-	
+
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
 		rh.logger.Info(operation,
 			String("action", "ATTEMPT"),
@@ -205,7 +205,7 @@ func (rh *RetryHandler) ExecuteWithRetry(operation string, fn func() error, maxA
 		}
 
 		lastErr = err
-		
+
 		if attempt < maxAttempts {
 			// リトライ
 			nextRetryIn := backoff * time.Duration(attempt)
@@ -226,7 +226,7 @@ func (rh *RetryHandler) ExecuteWithRetry(operation string, fn func() error, maxA
 func (rh *RetryHandler) ExecuteWithCircuitBreaker(operation string, fn func() error, failureThreshold int, context map[string]interface{}) error {
 	// シンプルなサーキットブレーカーの実装
 	// 実際の実装では、より洗練された状態管理が必要
-	
+
 	rh.logger.Info(operation,
 		String("action", "CIRCUIT_BREAKER_EXECUTE"),
 		Int("failure_threshold", failureThreshold),
@@ -336,11 +336,11 @@ func (veh *VibeErrorHandler) HandleCodingError(err error, codeFile string, lineN
 // HandleTestError はテストエラーを処理する
 func (veh *VibeErrorHandler) HandleTestError(err error, testName string, testOutput string, expectedVsActual string) {
 	context := map[string]interface{}{
-		"session_id":          veh.sessionID,
-		"problem_domain":      veh.problemDomain,
-		"test_name":           testName,
-		"test_output":         testOutput,
-		"expected_vs_actual":  expectedVsActual,
+		"session_id":         veh.sessionID,
+		"problem_domain":     veh.problemDomain,
+		"test_name":          testName,
+		"test_output":        testOutput,
+		"expected_vs_actual": expectedVsActual,
 	}
 
 	veh.HandleError(err, context,
