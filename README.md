@@ -3,6 +3,7 @@
 [![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat&logo=go)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/ktanaha/vibe-coding-logger/workflows/CI/badge.svg)](https://github.com/ktanaha/vibe-coding-logger/actions)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat&logo=github-actions&logoColor=white)](https://github.com/ktanaha/vibe-coding-logger/actions)
 
 バイブコーディング（思考プロセスを重視したプログラミング）に特化した強力なGoロギングライブラリです。
 
