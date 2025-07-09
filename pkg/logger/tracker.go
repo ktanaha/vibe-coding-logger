@@ -57,7 +57,7 @@ func (t *OperationTracker) CreateSubOperation(operation string, input map[string
 		subTracker.Context[k] = v
 	}
 
-	t.Logger.log(INFO, operation,
+	t.Logger.Info(operation,
 		String("action", string(ActionStart)),
 		String("operation_id", subTracker.ID),
 		String("parent_id", t.ID),
@@ -235,7 +235,7 @@ func (vt *VibeTracker) LogLearning(concept string, understanding string, applica
 // LogBlocker はブロッカーを記録します。
 // 開発を阻害する要因、影響、回避策、解決方法をWARNレベルで記録します。
 func (vt *VibeTracker) LogBlocker(blocker string, impact string, workaround string, resolution string) {
-	vt.Logger.log(WARN, "blocker",
+	vt.Logger.Warn("blocker",
 		String("session_id", vt.sessionID),
 		String("problem_domain", vt.problemDomain),
 		String("programming_step", vt.programmingStep),
@@ -315,7 +315,7 @@ func (bt *BatchOperationTracker) AddOperation(operation string, input map[string
 
 	bt.Operations = append(bt.Operations, tracker)
 
-	bt.Logger.log(INFO, operation,
+	bt.Logger.Info(operation,
 		String("action", string(ActionStart)),
 		String("operation_id", tracker.ID),
 		String("batch_id", bt.ID),
@@ -337,7 +337,7 @@ func (bt *BatchOperationTracker) Complete(summary map[string]interface{}) {
 		"total_duration":       duration,
 	}
 
-	bt.Logger.log(INFO, bt.BatchName,
+	bt.Logger.Info(bt.BatchName,
 		String("action", string(ActionComplete)),
 		String("batch_id", bt.ID),
 		Any("summary", summary),
@@ -361,14 +361,18 @@ func (bt *BatchOperationTracker) countFailedOperations() int {
 // LogOperationMetrics は操作メトリクスを記録します。
 // 操作の結果、実行時間、メタデータを記録し、パフォーマンス分析を支援します。
 func LogOperationMetrics(ctx context.Context, logger Logger, operation string, duration time.Duration, success bool, metadata map[string]interface{}) {
-	logLevel := INFO
-	if !success {
-		logLevel = ERROR
+	contextLogger := logger.WithContext(ctx)
+	if success {
+		contextLogger.Info("operation_metrics",
+			String("operation", operation),
+			String("result", "SUCCESS"),
+			Duration("duration", duration),
+			Any("metadata", metadata))
+	} else {
+		contextLogger.Error("operation_metrics",
+			String("operation", operation),
+			String("result", "FAILURE"),
+			Duration("duration", duration),
+			Any("metadata", metadata))
 	}
-
-	logger.WithContext(ctx).log(logLevel, "operation_metrics",
-		String("operation", operation),
-		String("result", map[bool]string{true: "SUCCESS", false: "FAILURE"}[success]),
-		Duration("duration", duration),
-		Any("metadata", metadata))
 }

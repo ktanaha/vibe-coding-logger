@@ -1,30 +1,15 @@
 package writer
 
 import (
-	"fmt"
 	"os"
 	"sync"
-	"vibe-coding-logger/pkg/logger"
+	"vibe-coding-logger/internal"
 	"vibe-coding-logger/internal/formatter"
-)
-
-// エイリアスを定義
-type Entry = logger.Entry
-type LogLevel = logger.LogLevel
-type Formatter = logger.Formatter
-
-// 定数のエイリアス
-const (
-	DEBUG = logger.DEBUG
-	INFO  = logger.INFO
-	WARN  = logger.WARN
-	ERROR = logger.ERROR
-	FATAL = logger.FATAL
 )
 
 // ConsoleWriter はコンソールへのログ出力を行う
 type ConsoleWriter struct {
-	formatter Formatter
+	formatter internal.Formatter
 	mu        sync.Mutex
 }
 
@@ -34,7 +19,7 @@ func NewConsoleWriter() *ConsoleWriter {
 }
 
 // Write はエントリをコンソールに書き込む
-func (w *ConsoleWriter) Write(entry *Entry) error {
+func (w *ConsoleWriter) Write(entry *internal.Entry) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
@@ -49,7 +34,7 @@ func (w *ConsoleWriter) Write(entry *Entry) error {
 	}
 
 	// エラーレベルによって出力先を変える
-	if entry.Level >= ERROR {
+	if entry.Level >= internal.ERROR {
 		_, err = os.Stderr.Write(formatted)
 	} else {
 		_, err = os.Stdout.Write(formatted)
@@ -59,7 +44,7 @@ func (w *ConsoleWriter) Write(entry *Entry) error {
 }
 
 // SetFormatter はフォーマッターを設定する
-func (w *ConsoleWriter) SetFormatter(f Formatter) {
+func (w *ConsoleWriter) SetFormatter(f internal.Formatter) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.formatter = f

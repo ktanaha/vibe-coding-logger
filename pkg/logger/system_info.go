@@ -1,10 +1,8 @@
 package logger
 
 import (
-	"fmt"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 	"sync"
 	"time"

@@ -6,19 +6,15 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
-	"vibe-coding-logger/pkg/logger"
+	"vibe-coding-logger/internal"
 	"vibe-coding-logger/internal/formatter"
 )
-
-// エイリアスを定義
-type Entry = logger.Entry
-type Formatter = logger.Formatter
 
 // FileWriter はファイルへのログ出力を行う
 type FileWriter struct {
 	filename  string
 	file      *os.File
-	formatter Formatter
+	formatter internal.Formatter
 	mu        sync.Mutex
 }
 
@@ -42,7 +38,7 @@ func NewFileWriter(filename string) (*FileWriter, error) {
 }
 
 // Write はエントリをファイルに書き込む
-func (w *FileWriter) Write(entry *Entry) error {
+func (w *FileWriter) Write(entry *internal.Entry) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
@@ -66,7 +62,7 @@ func (w *FileWriter) Write(entry *Entry) error {
 }
 
 // SetFormatter はフォーマッターを設定する
-func (w *FileWriter) SetFormatter(f Formatter) {
+func (w *FileWriter) SetFormatter(f internal.Formatter) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.formatter = f
@@ -90,7 +86,7 @@ type RotatingFileWriter struct {
 	maxFiles     int
 	currentFile  *os.File
 	currentSize  int64
-	formatter    logger.Formatter
+	formatter    internal.Formatter
 	mu           sync.Mutex
 }
 
@@ -115,12 +111,12 @@ func NewRotatingFileWriter(baseFilename string, maxSize int64, maxFiles int) (*R
 }
 
 // Write はエントリをローテーションファイルに書き込む
-func (w *RotatingFileWriter) Write(entry *logger.Entry) error {
+func (w *RotatingFileWriter) Write(entry *internal.Entry) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
 	if w.formatter == nil {
-		w.formatter = NewJSONFormatter()
+		w.formatter = formatter.NewJSONFormatter()
 	}
 
 	formatted, err := w.formatter.Format(entry)
@@ -162,13 +158,13 @@ func (w *RotatingFileWriter) rotate() error {
 		}
 		
 		if _, err := os.Stat(oldName); err == nil {
-			os.Rename(oldName, newName)
+			_ = os.Rename(oldName, newName) // エラーは無視（ログローテーション時のベストエフォート）
 		}
 	}
 
 	// 現在のファイルを .1 にリネーム
 	if _, err := os.Stat(w.baseFilename); err == nil {
-		os.Rename(w.baseFilename, w.baseFilename+".1")
+		_ = os.Rename(w.baseFilename, w.baseFilename+".1") // エラーは無視（ログローテーション時のベストエフォート）
 	}
 
 	// 新しいファイルを作成
@@ -195,7 +191,7 @@ func (w *RotatingFileWriter) openCurrentFile() error {
 }
 
 // SetFormatter はフォーマッターを設定する
-func (w *RotatingFileWriter) SetFormatter(formatter logger.Formatter) {
+func (w *RotatingFileWriter) SetFormatter(formatter internal.Formatter) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.formatter = formatter
@@ -217,7 +213,7 @@ type DailyRotatingFileWriter struct {
 	baseFilename string
 	currentDate  string
 	currentFile  *os.File
-	formatter    logger.Formatter
+	formatter    internal.Formatter
 	mu           sync.Mutex
 }
 
@@ -240,12 +236,12 @@ func NewDailyRotatingFileWriter(baseFilename string) (*DailyRotatingFileWriter, 
 }
 
 // Write はエントリを日次ローテーションファイルに書き込む
-func (w *DailyRotatingFileWriter) Write(entry *logger.Entry) error {
+func (w *DailyRotatingFileWriter) Write(entry *internal.Entry) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
 	if w.formatter == nil {
-		w.formatter = NewJSONFormatter()
+		w.formatter = formatter.NewJSONFormatter()
 	}
 
 	// 日付が変わったかチェック
@@ -296,7 +292,7 @@ func (w *DailyRotatingFileWriter) openCurrentFile() error {
 }
 
 // SetFormatter はフォーマッターを設定する
-func (w *DailyRotatingFileWriter) SetFormatter(formatter logger.Formatter) {
+func (w *DailyRotatingFileWriter) SetFormatter(formatter internal.Formatter) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.formatter = formatter
@@ -337,7 +333,7 @@ func NewVibeFileWriter(baseFilename, sessionID, problemDomain string) (*VibeFile
 	}
 
 	// バイブ専用フォーマッターを設定
-	vfw.SetFormatter(NewVibeJSONFormatter())
+	vfw.SetFormatter(formatter.NewVibeJSONFormatter())
 
 	return vfw, nil
 }
@@ -365,12 +361,12 @@ func NewBufferedFileWriter(filename string, bufferSize int) (*BufferedFileWriter
 }
 
 // Write はエントリをバッファに書き込む
-func (w *BufferedFileWriter) Write(entry *logger.Entry) error {
+func (w *BufferedFileWriter) Write(entry *internal.Entry) error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 
 	if w.formatter == nil {
-		w.formatter = NewJSONFormatter()
+		w.formatter = formatter.NewJSONFormatter()
 	}
 
 	formatted, err := w.formatter.Format(entry)

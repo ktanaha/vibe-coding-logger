@@ -5,20 +5,7 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"vibe-coding-logger/pkg/logger"
-)
-
-// エイリアスを定義
-type Entry = logger.Entry
-type LogLevel = logger.LogLevel
-
-// 定数のエイリアス
-const (
-	DEBUG = logger.DEBUG
-	INFO  = logger.INFO
-	WARN  = logger.WARN
-	ERROR = logger.ERROR
-	FATAL = logger.FATAL
+	"vibe-coding-logger/internal"
 )
 
 // TextFormatter はテキスト形式でログを出力する
@@ -46,7 +33,7 @@ func NewTextFormatter() *TextFormatter {
 }
 
 // Format はエントリをテキスト形式にフォーマットする
-func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
+func (f *TextFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	var parts []string
 
 	// タイムスタンプ
@@ -79,7 +66,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	// コンテキストフィールド
-	if entry.Context != nil && len(entry.Context) > 0 {
+	if len(entry.Context) > 0 {
 		contextStr := f.formatFields(entry.Context)
 		if contextStr != "" {
 			parts = append(parts, contextStr)
@@ -96,22 +83,22 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	// 入力
-	if entry.Input != nil && len(entry.Input) > 0 {
+	if len(entry.Input) > 0 {
 		parts = append(parts, fmt.Sprintf("input=%s", f.formatMapCompact(entry.Input)))
 	}
 
 	// 出力
-	if entry.Output != nil && len(entry.Output) > 0 {
+	if len(entry.Output) > 0 {
 		parts = append(parts, fmt.Sprintf("output=%s", f.formatMapCompact(entry.Output)))
 	}
 
 	// タグ
-	if entry.Tags != nil && len(entry.Tags) > 0 {
+	if len(entry.Tags) > 0 {
 		parts = append(parts, fmt.Sprintf("tags=%s", strings.Join(entry.Tags, ",")))
 	}
 
 	// 呼び出し元
-	if f.ShowCaller && entry.Metadata != nil {
+	if f.ShowCaller && len(entry.Metadata) > 0 {
 		if caller, ok := entry.Metadata["caller"]; ok {
 			parts = append(parts, fmt.Sprintf("caller=%s", caller))
 		}
@@ -122,7 +109,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 }
 
 // formatLevel はログレベルを色付きでフォーマットする
-func (f *TextFormatter) formatLevel(level LogLevel) string {
+func (f *TextFormatter) formatLevel(level internal.LogLevel) string {
 	levelStr := level.String()
 	
 	if !f.ColorEnabled {
@@ -130,15 +117,15 @@ func (f *TextFormatter) formatLevel(level LogLevel) string {
 	}
 
 	switch level {
-	case DEBUG:
+	case internal.DEBUG:
 		return fmt.Sprintf("\033[36m[%s]\033[0m", levelStr) // Cyan
-	case INFO:
+	case internal.INFO:
 		return fmt.Sprintf("\033[32m[%s]\033[0m", levelStr) // Green
-	case WARN:
+	case internal.WARN:
 		return fmt.Sprintf("\033[33m[%s]\033[0m", levelStr) // Yellow
-	case ERROR:
+	case internal.ERROR:
 		return fmt.Sprintf("\033[31m[%s]\033[0m", levelStr) // Red
-	case FATAL:
+	case internal.FATAL:
 		return fmt.Sprintf("\033[35m[%s]\033[0m", levelStr) // Magenta
 	default:
 		return fmt.Sprintf("[%s]", levelStr)
@@ -196,7 +183,7 @@ func NewConsoleFormatter() *ConsoleFormatter {
 }
 
 // Format はエントリをコンソール向けにフォーマットする
-func (f *ConsoleFormatter) Format(entry *logger.Entry) ([]byte, error) {
+func (f *ConsoleFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	var parts []string
 
 	// タイムスタンプ（短縮版）
@@ -219,7 +206,7 @@ func (f *ConsoleFormatter) Format(entry *logger.Entry) ([]byte, error) {
 	}
 
 	// バイブコーディング情報
-	if entry.Context != nil {
+	if len(entry.Context) > 0 {
 		if sessionID, ok := entry.Context["session_id"]; ok {
 			parts = append(parts, fmt.Sprintf("🔧 %s", sessionID))
 		}
@@ -233,21 +220,21 @@ func (f *ConsoleFormatter) Format(entry *logger.Entry) ([]byte, error) {
 }
 
 // formatLevelWithEmoji はログレベルを絵文字付きでフォーマットする
-func (f *ConsoleFormatter) formatLevelWithEmoji(level logger.LogLevel) string {
+func (f *ConsoleFormatter) formatLevelWithEmoji(level internal.LogLevel) string {
 	if !f.UseEmoji {
 		return f.formatLevel(level)
 	}
 
 	switch level {
-	case logger.DEBUG:
+	case internal.DEBUG:
 		return "🔍 DEBUG"
-	case logger.INFO:
+	case internal.INFO:
 		return "ℹ️  INFO"
-	case logger.WARN:
+	case internal.WARN:
 		return "⚠️  WARN"
-	case logger.ERROR:
+	case internal.ERROR:
 		return "❌ ERROR"
-	case logger.FATAL:
+	case internal.FATAL:
 		return "💀 FATAL"
 	default:
 		return fmt.Sprintf("❓ %s", level.String())
@@ -273,7 +260,7 @@ func NewVibeTextFormatter() *VibeTextFormatter {
 }
 
 // Format はエントリをバイブコーディング用テキスト形式にフォーマットする
-func (f *VibeTextFormatter) Format(entry *logger.Entry) ([]byte, error) {
+func (f *VibeTextFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	var parts []string
 
 	// タイムスタンプ
@@ -284,7 +271,7 @@ func (f *VibeTextFormatter) Format(entry *logger.Entry) ([]byte, error) {
 	parts = append(parts, levelStr)
 
 	// セッション情報
-	if f.ShowSessionInfo && entry.Context != nil {
+	if f.ShowSessionInfo && len(entry.Context) > 0 {
 		if sessionID, ok := entry.Context["session_id"]; ok {
 			icon := "🔧"
 			if f.UseIcons {
@@ -296,7 +283,7 @@ func (f *VibeTextFormatter) Format(entry *logger.Entry) ([]byte, error) {
 	}
 
 	// ステップ情報
-	if f.ShowStepInfo && entry.Context != nil {
+	if f.ShowStepInfo && len(entry.Context) > 0 {
 		if step, ok := entry.Context["programming_step"]; ok {
 			icon := f.getStepIcon(fmt.Sprintf("%v", step))
 			if f.UseIcons {
@@ -330,7 +317,7 @@ func (f *VibeTextFormatter) Format(entry *logger.Entry) ([]byte, error) {
 	}
 
 	// その他のコンテキスト情報
-	if entry.Context != nil {
+	if len(entry.Context) > 0 {
 		filteredContext := make(map[string]interface{})
 		for k, v := range entry.Context {
 			if k != "session_id" && k != "programming_step" {
@@ -392,7 +379,7 @@ func NewCompactTextFormatter() *CompactTextFormatter {
 }
 
 // Format はエントリをコンパクトテキスト形式にフォーマットする
-func (f *CompactTextFormatter) Format(entry *logger.Entry) ([]byte, error) {
+func (f *CompactTextFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	var parts []string
 
 	// タイムスタンプ
@@ -402,11 +389,11 @@ func (f *CompactTextFormatter) Format(entry *logger.Entry) ([]byte, error) {
 	levelStr := entry.Level.String()
 	if f.ColorEnabled {
 		switch entry.Level {
-		case logger.ERROR:
+		case internal.ERROR:
 			levelStr = fmt.Sprintf("\033[31m%s\033[0m", levelStr)
-		case logger.WARN:
+		case internal.WARN:
 			levelStr = fmt.Sprintf("\033[33m%s\033[0m", levelStr)
-		case logger.INFO:
+		case internal.INFO:
 			levelStr = fmt.Sprintf("\033[32m%s\033[0m", levelStr)
 		}
 	}

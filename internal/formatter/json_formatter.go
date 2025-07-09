@@ -3,22 +3,7 @@ package formatter
 import (
 	"encoding/json"
 	"time"
-	"vibe-coding-logger/pkg/logger"
-)
-
-// エイリアスを定義
-type Entry = logger.Entry
-type LogLevel = logger.LogLevel
-type ActionType = logger.ActionType
-type ErrorInfo = logger.ErrorInfo
-
-// 定数のエイリアス
-const (
-	DEBUG = logger.DEBUG
-	INFO  = logger.INFO
-	WARN  = logger.WARN
-	ERROR = logger.ERROR
-	FATAL = logger.FATAL
+	"vibe-coding-logger/internal"
 )
 
 // JSONFormatter はJSON形式でログを出力する
@@ -44,7 +29,7 @@ func NewPrettyJSONFormatter() *JSONFormatter {
 }
 
 // Format はエントリをJSON形式にフォーマットする
-func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
+func (f *JSONFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	// タイムスタンプを文字列に変換
 	data := map[string]interface{}{
 		"id":        entry.ID,
@@ -55,11 +40,11 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	// 追加フィールドを設定
-	if entry.Input != nil && len(entry.Input) > 0 {
+	if len(entry.Input) > 0 {
 		data["input"] = entry.Input
 	}
 
-	if entry.Output != nil && len(entry.Output) > 0 {
+	if len(entry.Output) > 0 {
 		data["output"] = entry.Output
 	}
 
@@ -72,11 +57,11 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 		data["duration_ms"] = entry.Duration.Milliseconds()
 	}
 
-	if entry.Context != nil && len(entry.Context) > 0 {
+	if len(entry.Context) > 0 {
 		data["context"] = entry.Context
 	}
 
-	if entry.Tags != nil && len(entry.Tags) > 0 {
+	if len(entry.Tags) > 0 {
 		data["tags"] = entry.Tags
 	}
 
@@ -92,7 +77,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 		data["parent_id"] = entry.ParentID
 	}
 
-	if entry.Metadata != nil && len(entry.Metadata) > 0 {
+	if len(entry.Metadata) > 0 {
 		data["metadata"] = entry.Metadata
 	}
 
@@ -121,7 +106,7 @@ func NewVibeJSONFormatter() *VibeJSONFormatter {
 }
 
 // Format はエントリをバイブコーディング用JSON形式にフォーマットする
-func (f *VibeJSONFormatter) Format(entry *Entry) ([]byte, error) {
+func (f *VibeJSONFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	// 基本のJSONフォーマットを取得
 	baseData := make(map[string]interface{})
 	baseBytes, err := f.JSONFormatter.Format(entry)
@@ -194,7 +179,7 @@ func NewCompactJSONFormatter() *CompactJSONFormatter {
 }
 
 // Format はエントリをコンパクトなJSON形式にフォーマットする
-func (f *CompactJSONFormatter) Format(entry *Entry) ([]byte, error) {
+func (f *CompactJSONFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	data := map[string]interface{}{
 		"ts":  entry.Timestamp.Format(f.TimestampFormat),
 		"lvl": entry.Level.String(),
@@ -237,7 +222,7 @@ func NewStructuredJSONFormatter() *StructuredJSONFormatter {
 }
 
 // Format はエントリを構造化JSON形式にフォーマットする
-func (f *StructuredJSONFormatter) Format(entry *Entry) ([]byte, error) {
+func (f *StructuredJSONFormatter) Format(entry *internal.Entry) ([]byte, error) {
 	data := map[string]interface{}{
 		"log": map[string]interface{}{
 			"id":        entry.ID,
@@ -255,11 +240,11 @@ func (f *StructuredJSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	// 入出力情報
-	if entry.Input != nil && len(entry.Input) > 0 {
+	if len(entry.Input) > 0 {
 		data["input"] = entry.Input
 	}
 
-	if entry.Output != nil && len(entry.Output) > 0 {
+	if len(entry.Output) > 0 {
 		data["output"] = entry.Output
 	}
 
@@ -301,17 +286,17 @@ func (f *StructuredJSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	// メタデータ
-	if entry.Metadata != nil && len(entry.Metadata) > 0 {
+	if len(entry.Metadata) > 0 {
 		data["metadata"] = entry.Metadata
 	}
 
 	// コンテキスト
-	if entry.Context != nil && len(entry.Context) > 0 {
+	if len(entry.Context) > 0 {
 		data["context"] = entry.Context
 	}
 
 	// タグ
-	if entry.Tags != nil && len(entry.Tags) > 0 {
+	if len(entry.Tags) > 0 {
 		data["tags"] = entry.Tags
 	}
 
