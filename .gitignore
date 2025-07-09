@@ -1,0 +1,107 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteFile
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Coverage reports
+coverage.txt
+coverage.html
+
+# Profiling files
+*.prof
+
+# Debug files
+debug
+debug.log
+
+# Example outputs (for development)
+examples/*.log
+examples/output/
+
+# Test artifacts
+test_output/
+benchmark_results/
+
+# Documentation build
+docs/_build/
+docs/.doctrees/
+
+# Local development files
+local/
+*.local
+
+# Editor backups
+*.bak
+*.backup
+
+# Go module download cache
+go.sum.bak
+
+# Air (Go live reload) temp files
+tmp/
+
+# Testing database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Performance test results
+*.bench
+*.pprof
+
+# Local configuration
+config.local.*
+
+# Generated files (if any)
+generated/
+auto-generated/
