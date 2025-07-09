@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 1.24.x
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Build
+      run: go build -v ./...
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          ## 🎯 Vibe Coding Logger ${{ github.ref }}
+          
+          バイブコーディング専用Goロギングライブラリのリリースです。
+          
+          ### ✨ 主要機能
+          - 🧠 バイブコーディング専用トラッキング
+          - 🖥️ システム情報自動収集
+          - 📊 操作追跡機能
+          - 🔄 高度なエラーハンドリング
+          - 📋 構造化ログ出力
+          - ⚡ パフォーマンス最適化
+          
+          ### 🚀 インストール
+          ```bash
+          go get github.com/ktanaha/vibe-coding-logger
+          ```
+          
+          ### 📖 詳細情報
+          - [README](https://github.com/ktanaha/vibe-coding-logger/blob/main/README.md)
+          - [CHANGELOG](https://github.com/ktanaha/vibe-coding-logger/blob/main/CHANGELOG.md)
+          - [コントリビューション](https://github.com/ktanaha/vibe-coding-logger/blob/main/CONTRIBUTING.md)
+        draft: false
+        prerelease: false

@@ -2,7 +2,7 @@
 
 [![Go Version](https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat&logo=go)](https://golang.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-username/vibe-coding-logger)
+[![Build Status](https://github.com/ktanaha/vibe-coding-logger/workflows/CI/badge.svg)](https://github.com/ktanaha/vibe-coding-logger/actions)
 
 バイブコーディング（思考プロセスを重視したプログラミング）に特化した強力なGoロギングライブラリです。
 
@@ -21,7 +21,7 @@
 ### インストール
 
 ```bash
-go get github.com/your-username/vibe-coding-logger
+go get github.com/ktanaha/vibe-coding-logger
 ```
 
 ### 基本的な使用方法
@@ -29,7 +29,7 @@ go get github.com/your-username/vibe-coding-logger
 ```go
 package main
 
-import "github.com/your-username/vibe-coding-logger/pkg/logger"
+import "github.com/ktanaha/vibe-coding-logger/pkg/logger"
 
 func main() {
     // デフォルトロガーを作成
@@ -249,9 +249,9 @@ vibe-coding-logger/
 
 ## 📧 サポート
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/vibe-coding-logger/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/vibe-coding-logger/discussions)
-- **Documentation**: [Wiki](https://github.com/your-username/vibe-coding-logger/wiki)
+- **Issues**: [GitHub Issues](https://github.com/ktanaha/vibe-coding-logger/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ktanaha/vibe-coding-logger/discussions)
+- **Documentation**: [Wiki](https://github.com/ktanaha/vibe-coding-logger/wiki)
 
 ---
 
@@ -259,6 +259,6 @@ vibe-coding-logger/
 
 **バイブコーディングの体験向上に向けて、一緒に開発しましょう！**
 
-[⭐ Star this repository](https://github.com/your-username/vibe-coding-logger) | [📖 Read the docs](https://github.com/your-username/vibe-coding-logger/wiki) | [🐛 Report a bug](https://github.com/your-username/vibe-coding-logger/issues)
+[⭐ Star this repository](https://github.com/ktanaha/vibe-coding-logger) | [📖 Read the docs](https://github.com/ktanaha/vibe-coding-logger/wiki) | [🐛 Report a bug](https://github.com/ktanaha/vibe-coding-logger/issues)
 
 </div>
