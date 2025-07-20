@@ -59,6 +59,17 @@ func NewTextFormatter() Formatter {
 	}
 }
 
+// NewFileWriter は新しいファイルライターを作成します
+func NewFileWriter(filename string) (Writer, error) {
+	internalWriter, err := writer.NewFileWriter(filename)
+	if err != nil {
+		return nil, err
+	}
+	return &fileWriterImpl{
+		internalWriter: internalWriter,
+	}, nil
+}
+
 // consoleWriterImpl はinternal/writerを使用したWriter実装
 type consoleWriterImpl struct {
 	internalWriter internal.Writer
@@ -81,4 +92,29 @@ type formatterAdapter struct {
 func (fa *formatterAdapter) Format(entry *Entry) ([]byte, error) {
 	internalEntry := convertToInternalEntry(entry)
 	return fa.internalFormatter.Format(internalEntry)
+}
+
+// fileWriterImpl はinternal/writerを使用したFileWriter実装
+type fileWriterImpl struct {
+	internalWriter *writer.FileWriter
+}
+
+func (fw *fileWriterImpl) Write(entry *Entry) error {
+	internalEntry := convertToInternalEntry(entry)
+	return fw.internalWriter.Write(internalEntry)
+}
+
+func (fw *fileWriterImpl) Close() error {
+	return fw.internalWriter.Close()
+}
+
+func (fw *fileWriterImpl) SetFormatter(formatter Formatter) {
+	if fa, ok := formatter.(*formatterAdapter); ok {
+		fw.internalWriter.SetFormatter(fa.internalFormatter)
+	}
+}
+
+// GetInternalFormatter は内部フォーマッターを取得します
+func (fa *formatterAdapter) GetInternalFormatter() internal.Formatter {
+	return fa.internalFormatter
 }
