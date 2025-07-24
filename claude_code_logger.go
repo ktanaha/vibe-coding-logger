@@ -165,7 +165,7 @@ func (c *ClaudeCodeLogger) Close() error {
 	c.logger.Info("Claude Code セッション終了",
 		logger.String("end_time", time.Now().Format("2006-01-02 15:04:05")),
 	)
-	
+
 	if c.fileWriter != nil {
 		return c.fileWriter.Close()
 	}
@@ -185,28 +185,28 @@ func main() {
 
 	// 使用例
 	ccLogger.LogTaskStart("ファイル作成", "新しいGoファイルを作成します")
-	
+
 	ccLogger.LogFileOperation("CREATE", "example.go")
-	
+
 	ccLogger.LogCommand("go", []string{"build", "."})
-	
+
 	ccLogger.LogUserInteraction(
 		"Goファイルを作成してください",
 		"新しいGoファイルを作成しました。ビルドも正常に完了しました。",
 	)
-	
+
 	ccLogger.LogToolUsage("Write", "ファイル作成", map[string]interface{}{
-		"file_path": "example.go",
+		"file_path":      "example.go",
 		"content_length": 150,
 	})
-	
+
 	ccLogger.LogCodeGeneration("example.go", "Go", "サンプルのGo言語プログラム")
-	
+
 	ccLogger.LogTaskComplete("ファイル作成", time.Second*2)
-	
+
 	ccLogger.LogDebugInfo("プロセス状況", map[string]interface{}{
-		"memory_usage": "15MB",
-		"cpu_usage": "2.5%",
+		"memory_usage":      "15MB",
+		"cpu_usage":         "2.5%",
 		"active_goroutines": 5,
 	})
 
